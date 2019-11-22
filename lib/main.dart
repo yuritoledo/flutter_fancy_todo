@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:todo/model/todo.dart';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -18,7 +19,11 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final textCtrl = TextEditingController();
 
-  List _todoList = [];
+  List _todoList = <Todo>[];
+
+  int _removedIndex;
+
+  Todo _removedItem;
 
   @override
   void initState() {
@@ -57,7 +62,7 @@ class _HomeState extends State<Home> {
     if (text == null) return;
 
     setState(() {
-      _todoList.add({'title': text, 'value': false});
+      _todoList.add(Todo(title: text, isDone: false));
     });
     _saveData();
     textCtrl.clear();
@@ -105,6 +110,28 @@ class _HomeState extends State<Home> {
     return Dismissible(
         key: Key(index.toString()),
         direction: DismissDirection.startToEnd,
+        onDismissed: (dir) {
+          _removedIndex = index;
+          _removedItem = _todoList[index];
+          setState(() => _todoList.removeAt(index));
+
+          _saveData();
+
+          final snackbar = SnackBar(
+            content: Text('data'),
+            duration: Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'Desfazer',
+              onPressed: () {
+                setState(() {
+                  _todoList.insert(_removedIndex, _removedItem);
+                });
+              },
+            ),
+          );
+
+          Scaffold.of(context).showSnackBar(snackbar);
+        },
         background: Container(
           color: Colors.red,
           child: Align(
