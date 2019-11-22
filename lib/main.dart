@@ -19,7 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final textCtrl = TextEditingController();
 
-  List _todoList = <Todo>[];
+  List<Todo> _todoList = [];
 
   int _removedIndex;
 
@@ -111,15 +111,17 @@ class _HomeState extends State<Home> {
         key: Key(index.toString()),
         direction: DismissDirection.startToEnd,
         onDismissed: (dir) {
-          _removedIndex = index;
-          _removedItem = _todoList[index];
-          setState(() => _todoList.removeAt(index));
+          setState(() {
+            _removedIndex = index;
+            _removedItem = _todoList[index];
+            _todoList.removeAt(index);
+          });
 
           _saveData();
 
           final snackbar = SnackBar(
             content: Text('data'),
-            duration: Duration(seconds: 4),
+            duration: Duration(seconds: 2),
             action: SnackBarAction(
               label: 'Desfazer',
               onPressed: () {
@@ -143,13 +145,13 @@ class _HomeState extends State<Home> {
           ),
         ),
         child: CheckboxListTile(
-          title: Text(_todoList[index]['title']),
-          value: _todoList[index]['value'],
+          title: Text(_todoList[index].title),
+          value: _todoList[index].isDone,
           onChanged: (bool value) {
-            setState(() => _todoList[index]['value'] = value);
+            setState(() => _todoList[index].isDone = value);
             _saveData();
           },
-          secondary: _todoList[index]['value']
+          secondary: _todoList[index].isDone
               ? Icon(
                   Icons.check_circle,
                   color: Colors.green,
