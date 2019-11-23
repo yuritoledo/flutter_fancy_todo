@@ -29,10 +29,13 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    _readData().then((v) {
-      if (v == null) return;
+    _readData().then((value) {
+      if (value == null) return;
 
-      setState(() => _todoList = json.decode(v));
+      setState(() {
+        _todoList = json.decode(value);
+        print(_todoList);
+      });
     });
   }
 
@@ -68,6 +71,23 @@ class _HomeState extends State<Home> {
     textCtrl.clear();
   }
 
+  Future<Null> _refresh() async {
+    await Future.delayed(Duration(seconds: 1));
+
+    setState(() {
+      _todoList.sort((a, b) {
+        if (a.isDone && !b.isDone)
+          return 1;
+        else if (a.isDone && b.isDone)
+          return 0;
+        else
+          return -1;
+      });
+
+      _saveData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,10 +117,13 @@ class _HomeState extends State<Home> {
           )),
         ),
         Expanded(
-          child: ListView.builder(
-              itemCount: _todoList.length,
-              padding: EdgeInsets.only(top: 10.0),
-              itemBuilder: buildCheckboxListTile),
+          child: RefreshIndicator(
+            onRefresh: _refresh,
+            child: ListView.builder(
+                itemCount: _todoList.length,
+                padding: EdgeInsets.only(top: 10.0),
+                itemBuilder: buildCheckboxListTile),
+          ),
         )
       ]),
     );
@@ -108,7 +131,7 @@ class _HomeState extends State<Home> {
 
   Widget buildCheckboxListTile(context, int index) {
     return Dismissible(
-        key: Key(index.toString()),
+        key: Key(DateTime.now().toString()),
         direction: DismissDirection.startToEnd,
         onDismissed: (dir) {
           setState(() {
