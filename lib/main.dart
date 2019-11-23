@@ -146,8 +146,9 @@ class _HomeState extends State<Home> {
           _saveData();
 
           final snackbar = SnackBar(
-            content: Text('data'),
-            duration: Duration(seconds: 2),
+            content: Text(
+                'Tarefa "${_todoList[index].title}" removida com sucesso!'),
+            duration: Duration(seconds: 4),
             action: SnackBarAction(
               label: 'Desfazer',
               onPressed: () {
