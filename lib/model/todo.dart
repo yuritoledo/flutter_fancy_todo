@@ -9,10 +9,10 @@ class Todo {
     isDone = json['isDone'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['title'] = this.title;
-    data['isDone'] = this.isDone;
-    return data;
+  toJson() {
+    return {
+      'title': title,
+      'isDone': isDone,
+    };
   }
 }

@@ -33,7 +33,10 @@ class _HomeState extends State<Home> {
       if (value == null) return;
 
       setState(() {
-        _todoList = json.decode(value);
+        final todoJson = jsonDecode(value);
+        for (var todo in todoJson) {
+          _todoList.add(Todo.fromJson(todo));
+        }
         print(_todoList);
       });
     });
@@ -46,7 +49,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<File> _saveData() async {
-    String data = json.encode(_todoList);
+    String data = jsonEncode(_todoList);
     File file = await _getFile();
     return file.writeAsString(data);
   }
